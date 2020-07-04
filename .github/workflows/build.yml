@@ -1,0 +1,33 @@
+name: build
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+env:
+  NODE_VERSION: 12
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile --link-duplicates
+
+      - name: Lint
+        run: yarn jest
+
+      - name: Build
+        run: yarn build
+
+      - name: Unit tests
+        run: yarn jest --maxWorkers=2 --ci
